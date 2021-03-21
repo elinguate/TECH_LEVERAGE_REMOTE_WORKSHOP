@@ -7,11 +7,21 @@ public class SandboxGun : MonoBehaviour
 {
     public Text m_TextDisplay;
 
-    public GunComponentData m_Data;
-
     public Transform m_FireOrigin;
     public GameObject m_ProjectilePrefab;
 
+    [Header("Bullet Data")]
+    public SandboxBullet.BulletData.BulletType m_BulletType;
+    public float m_BulletMoveSpeed = 8.0f;
+    public float m_BulletRadius = 0.25f;
+    public int m_BulletDamage = 10;
+
+    public bool m_BulletUsesGravity = false;
+    public float m_BulletGravity = 10.0f;
+
+    public int m_Pierces = 0;
+
+    [Header("Gun Data")]
     public float m_ReloadLength;
     private float m_ReloadTimer = 0.0f;
     private bool m_IsReloading = false;
@@ -43,7 +53,17 @@ public class SandboxGun : MonoBehaviour
 
     private void FireProjectile()
     {
-        Instantiate(m_ProjectilePrefab, m_FireOrigin.position, m_FireOrigin.rotation);
+        SandboxBullet.BulletData data;
+        data.m_Type = m_BulletType;
+        data.m_MoveSpeed = m_BulletMoveSpeed;
+        data.m_Radius = m_BulletRadius;
+        data.m_Damage = m_BulletDamage;
+        data.m_AffectedByGravity = m_BulletUsesGravity;
+        data.m_Gravity = m_BulletGravity;
+        data.m_Pierces = m_Pierces;
+
+        GameObject projectile = Instantiate(m_ProjectilePrefab, m_FireOrigin.position, m_FireOrigin.rotation);
+        projectile.GetComponent<SandboxBullet>().Initialize(data);
     }
 
     private void ReloadGun()

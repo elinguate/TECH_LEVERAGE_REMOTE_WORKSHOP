@@ -9,12 +9,7 @@ public class CharacterMotor : MonoBehaviour
     public MouseLook m_Look;
 
     [Header("Motion")]
-    public float m_MoveSpeed = 8.0f;
-    public float m_Gravity = 20.0f;
-    public float m_JumpSpeed = 10.0f;
-    public float m_Acceleration = 8.0f;
-    public AnimationCurve m_Friction = AnimationCurve.EaseInOut(0.0f, 0.1f, 1.0f, 1.0f);
-    public float m_StopFriction = 2.0f;
+    public CharacterMotorData m_Data;
 
     private Vector3 m_Velocity = new Vector3(0.0f, 0.0f, 0.0f);
     private bool m_IsGrounded = false;
@@ -47,18 +42,37 @@ public class CharacterMotor : MonoBehaviour
 
         if (m_IsGrounded && Input.GetKey(KeyCode.Space))
         {
-            m_Velocity.y = m_JumpSpeed;
+            m_Velocity.y = m_Data.m_JumpSpeed;
             m_IsGrounded = false;
         }
 
         Vector3 inputVelocity = new Vector3(x, 0.0f, z);
         inputVelocity = Quaternion.Euler(0.0f, m_Look.m_Spin, 0.0f) * inputVelocity;
+        if (inputVelocity.magnitude > 1.0f)
+        {
+            inputVelocity.Normalize();
+        }
 
-        m_Velocity.y -= m_Gravity * Time.deltaTime;
-        m_Velocity.x = inputVelocity.x * m_MoveSpeed;
-        m_Velocity.z = inputVelocity.z * m_MoveSpeed;
+        float cacheY = m_Velocity.y;
+        m_Velocity.y = 0.0f;
 
-        m_AttachedController.Move(m_Velocity * Time.deltaTime);
+        m_Velocity += inputVelocity * m_Data.m_Acceleration * Time.deltaTime;
+        Vector3 cacheVelocity = m_Velocity;
+        m_Velocity -= m_Velocity.normalized * m_Data.m_Friction.Evaluate(m_Velocity.magnitude) * m_Data.m_Acceleration * Time.deltaTime;
+        if (Vector3.Dot(cacheVelocity.normalized, m_Velocity.normalized) < -0.5f)
+        {
+            m_Velocity.x = 0.0f;
+            m_Velocity.z = 0.0f;
+        }
+
+        m_Velocity.y = cacheY;
+        m_Velocity.y -= m_Data.m_Gravity * Time.deltaTime;
+
+        Vector3 trueVelocity = m_Velocity;
+        trueVelocity.x *= m_Data.m_MoveSpeed;
+        trueVelocity.z *= m_Data.m_MoveSpeed;
+
+        m_AttachedController.Move(trueVelocity * Time.deltaTime);
 
         if ((m_AttachedController.collisionFlags & CollisionFlags.Below) != 0)
         {

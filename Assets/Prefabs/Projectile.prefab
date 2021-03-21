@@ -89,6 +89,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4551054679632688709}
   - component: {fileID: 4551054679632688708}
+  - component: {fileID: -9141005244669748423}
   m_Layer: 0
   m_Name: Projectile
   m_TagString: Untagged
@@ -123,9 +124,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 779222ad8d7afe1459f12e0ed1e5186a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MoveSpeed: 8
-  m_Radius: 0.25
-  m_Damage: 5
   m_HittableLayerMask:
     serializedVersion: 2
     m_Bits: 768
+  m_DefaultHitEffectPrefab: {fileID: 2042010281996744155, guid: c8f2d17a6a58b8246aa89774f1e9955c,
+    type: 3}
+  m_BombHitEffectPrefab: {fileID: 2042010281996744155, guid: b1d0a286358a73b4c908381110031784,
+    type: 3}
+--- !u!114 &-9141005244669748423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4551054679632688711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 541da486161e50a488919f2c7ed9d240, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Time: 5
